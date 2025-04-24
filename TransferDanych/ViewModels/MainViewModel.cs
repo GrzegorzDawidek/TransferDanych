@@ -19,7 +19,7 @@ namespace TransferDanych.ViewModels
         private readonly IOsobaSerwis _osobaSerwis;
         private readonly IBazaDanychSerwis _dbSerwis;
         private string _ciagPolaczeniaZrodlowego, _ciagPolaczeniaDocelowego;
-        private int _aktualnaStrona = 1, _liczbaStron = 1, _rozmiarStrony = 10, _liczbaRekordow;
+        private int _aktualnaStrona = 1, _rozmiarStrony = 10, _liczbaRekordow;
         #endregion
         #region Właściwości
         public string WybranaBazaD { get; set; }
@@ -49,11 +49,11 @@ namespace TransferDanych.ViewModels
             get => _listaOsobPrzesylka;
             set => SetProperty(ref _listaOsobPrzesylka, value);
         }
-        private bool _czyMoznaUstawiSerwer = true;
-        public bool CzyMoznaUstawiSerwer
+        private bool _czyWidocznaKonfiguracjaPolaczenia = true;
+        public bool CzyWidocznaKonfiguracjaPolaczenia
         {
-            get => _czyMoznaUstawiSerwer;
-            set => SetProperty(ref _czyMoznaUstawiSerwer, value);
+            get => _czyWidocznaKonfiguracjaPolaczenia;
+            set => SetProperty(ref _czyWidocznaKonfiguracjaPolaczenia, value);
         }
         private bool _czyMoznaPrzeslac;
         public bool CzyMoznaPrzeslac
@@ -67,27 +67,6 @@ namespace TransferDanych.ViewModels
             get => _czyMoznaPobrac;
             set => SetProperty(ref _czyMoznaPobrac, value);
         }
-        private bool _czyBazaZAktywna = true;
-        public bool CzyBazaZAktywna
-        {
-            get => _czyBazaZAktywna;
-            set => SetProperty(ref _czyBazaZAktywna, value);
-        }
-
-        private bool _czyBazaDAktywna = true;
-        public bool CzyBazaDAktywna
-        {
-            get => _czyBazaDAktywna;
-            set => SetProperty(ref _czyBazaDAktywna, value);
-        }
-
-        private bool _czyPolaczAktywny = true;
-        public bool CzyPolaczAktywny
-        {
-            get => _czyPolaczAktywny;
-            set => SetProperty(ref _czyPolaczAktywny, value);
-        }
-
         private bool _czyPodgladAktywny = false;
         public bool CzyPodgladAktywny
         {
@@ -105,19 +84,18 @@ namespace TransferDanych.ViewModels
             get => _aktualnaStrona;
             set => SetProperty(ref _aktualnaStrona, value);
         }
+        private int _liczbaStron = 1;
         public int LiczbaStron
         {
             get => _liczbaStron;
             set => SetProperty(ref _liczbaStron, value);
         }
-
         private bool _czyMoznaWstecz;
         public bool CzyMoznaWstecz
         {
             get => _czyMoznaWstecz;
             set => SetProperty(ref _czyMoznaWstecz, value);
         }
-
         private bool _czyMoznaDalej;
         public bool CzyMoznaDalej
         {
@@ -154,7 +132,8 @@ namespace TransferDanych.ViewModels
             set => SetProperty(ref _czyPolaLogowaniaAktywne, value);
         }
         #endregion
-        public MainViewModel(IOptions<DaneStartoweConfig> config, IMessageDialogService komunikaty, IBazaDanychSerwis dbSerwis, IOsobaSerwis osobaSerwis, ITransferSerwis transferSerwis)
+        public MainViewModel(IOptions<DaneStartoweConfig> config, IMessageDialogService komunikaty, IBazaDanychSerwis dbSerwis,
+            IOsobaSerwis osobaSerwis, ITransferSerwis transferSerwis)
         {
             _komunikaty = komunikaty;
             _dbSerwis = dbSerwis;
@@ -189,10 +168,9 @@ namespace TransferDanych.ViewModels
                 _komunikaty.WyswietlKomunikat("Wybrano dwie takie same bazy. Operacja zabroniona.", "error");
                 return;
             }
-            UstawStanKontrolek(new Dictionary<string, bool> { { nameof(CzyPolaczAktywny), false } ,{nameof(CzyPolaLogowaniaAktywne), false },
-                { nameof(CzyBazaZAktywna), false },{ nameof(CzyBazaDAktywna), false },{nameof(CzyMoznaUstawiSerwer), false }});
+            UstawStanKontrolek(new Dictionary<string, bool> { { nameof(CzyWidocznaKonfiguracjaPolaczenia), false } ,{nameof(CzyPolaLogowaniaAktywne), false }});
 
-            _ciagPolaczeniaZrodlowego = StworzCiagPolaczenia(WybranaBazaZ,Login,Haslo,TypUwierzytelniania);
+            _ciagPolaczeniaZrodlowego = StworzCiagPolaczenia(WybranaBazaZ, Login, Haslo, TypUwierzytelniania);
             _ciagPolaczeniaDocelowego = StworzCiagPolaczenia(WybranaBazaD, Login, Haslo, TypUwierzytelniania);
 
             try
@@ -220,12 +198,12 @@ namespace TransferDanych.ViewModels
                 _komunikaty.WyswietlKomunikat("Wystąpił nieoczekiwany błąd podczas próby połączenia.", "error");
             }
             if (!czyPolaczono)
-                UstawStanKontrolek(new Dictionary<string, bool> { { nameof(CzyPolaczAktywny), true } ,{nameof(CzyPolaLogowaniaAktywne), true },
-                { nameof(CzyBazaZAktywna), true },{ nameof(CzyBazaDAktywna), true },{nameof(CzyMoznaUstawiSerwer), true }});
+                UstawStanKontrolek(new Dictionary<string, bool> { { nameof(CzyWidocznaKonfiguracjaPolaczenia), true }
+                    ,{nameof(CzyPolaLogowaniaAktywne), TypUwierzytelniania == "SQL Server Authentication" ? true : false } });
         }
-        private string StworzCiagPolaczenia(string baza, string login, string haslo,string typUwierzytelniania)
+        private string StworzCiagPolaczenia(string baza, string login, string haslo, string typUwierzytelniania)
         {
-            if(typUwierzytelniania == "Windows Authentication")
+            if (typUwierzytelniania == "Windows Authentication")
             {
                 return $"Data Source={NazwaSerwera};Initial catalog={baza};Integrated Security=True;";
             }
@@ -252,7 +230,8 @@ namespace TransferDanych.ViewModels
         [RelayCommand]
         public async Task PobierzDane() => await PobierzDaneZrodlowe();
         [RelayCommand]
-        public async Task PrzeslijZaznaczone(IList zaznaczoneElementy) => await PrzeslijDane(zaznaczoneElementy.Cast<Osoba>().Where(o => !Convert.ToBoolean(o.Status)).ToList());
+        public async Task PrzeslijZaznaczone(IList zaznaczoneElementy)
+            => await PrzeslijDane(zaznaczoneElementy.Cast<Osoba>().Where(o => !Convert.ToBoolean(o.Status)).ToList());
         [RelayCommand]
         public async Task PrzeslijWszystkie() => await PrzeslijDane(ListaOsobPrzesylka.Where(o => !Convert.ToBoolean(o.Status)).ToList());
         private async Task PrzeslijDane(IList<Osoba> wybraneOsoby)

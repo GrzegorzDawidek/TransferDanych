@@ -27,27 +27,27 @@
                     <GroupBox Header="Serwer" Margin="5" Grid.Row="0" Grid.ColumnSpan="2">
                         <StackPanel Margin="10">
                             <TextBlock Text="Serwer:" />
-                            <TextBox Text="{Binding NazwaSerwera, Mode=TwoWay}" IsEnabled="{Binding CzyMoznaUstawiSerwer}" />
+                            <TextBox Text="{Binding NazwaSerwera, Mode=TwoWay}" IsEnabled="{Binding CzyWidocznaKonfiguracjaPolaczenia}" />
                         </StackPanel>
                     </GroupBox>
 
                     <GroupBox Header="Baza źródłowa" Margin="5" Grid.Row="1" Grid.ColumnSpan="2">
                         <StackPanel Margin="10">
                             <TextBlock Text="Wybierz Bazę:" />
-                            <TextBox Text="{Binding WybranaBazaZ}" IsEnabled="{Binding CzyBazaZAktywna}" />
+                            <TextBox Text="{Binding WybranaBazaZ}" IsEnabled="{Binding CzyWidocznaKonfiguracjaPolaczenia}" />
                         </StackPanel>
                     </GroupBox>
 
                     <GroupBox Header="Baza docelowa" Margin="5" Grid.Row="2" Grid.ColumnSpan="2">
                         <StackPanel Margin="10">
                             <TextBlock Text="Wybierz Bazę:" />
-                            <TextBox Text="{Binding WybranaBazaD}" IsEnabled="{Binding CzyBazaZAktywna}" />
+                            <TextBox Text="{Binding WybranaBazaD}" IsEnabled="{Binding CzyWidocznaKonfiguracjaPolaczenia}" />
                         </StackPanel>
                     </GroupBox>
                     <GroupBox Header="Dane logowania" Margin="5" Grid.Row="3" Grid.ColumnSpan="2">
                         <StackPanel Margin="10">
                             <TextBlock Text="Uwierzytelnianie:"/>
-                            <ComboBox ItemsSource="{Binding TypyUwierzytelniania}" SelectedValue="{Binding TypUwierzytelniania, Mode=TwoWay}" Margin="0,5,0,10"/>
+                            <ComboBox ItemsSource="{Binding TypyUwierzytelniania}" SelectedValue="{Binding TypUwierzytelniania, Mode=TwoWay}" Margin="0,5,0,10" IsEnabled="{Binding CzyWidocznaKonfiguracjaPolaczenia}"/>
                             <TextBlock Text="Login:" />
                             <TextBox Text="{Binding Login, Mode=TwoWay}" IsEnabled="{Binding CzyPolaLogowaniaAktywne}" Margin="0,0,0,5" />
 
@@ -59,7 +59,7 @@
                         </StackPanel>
                     </GroupBox>
 
-                    <Button Grid.Row="4" Grid.ColumnSpan="2" Command="{Binding UtworzPolaczeniaITabeleCommand}" Content="Połącz" Margin="5" Height="35" HorizontalAlignment="Stretch" IsEnabled="{Binding CzyPolaczAktywny}"/>
+                    <Button Grid.Row="4" Grid.ColumnSpan="2" Command="{Binding UtworzPolaczeniaITabeleCommand}" Content="Połącz" Margin="5" Height="35" HorizontalAlignment="Stretch" IsEnabled="{Binding CzyWidocznaKonfiguracjaPolaczenia}"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Podgląd danych" IsEnabled="{Binding CzyPodgladAktywny}">
